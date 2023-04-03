@@ -38,7 +38,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" id="like-butt"></button>
             </div>
           </div>
         </li>
@@ -65,12 +65,90 @@
   </body>
 
   <script>
-    // Код писать здесь
+    // Код писать здесь время 18:30 начал кодить
     const buttonElement = document.getElementById('button');
     const listElement = document.getElementById('li_comment');
     const nameInputElement = document.getElementById('name-input');
     const textCommentElement = document.getElementById('text-comment');
-    // const commentData = new Date().toLocaleString;
+    const likeButtonElementList = document.getElementsByClassName("like-button");
+    // const commentElementlist = document.getElementById('ul-comment');
+    const commentArray = [
+        {
+          mainName: 'Глеб Фокин',
+          text: 'Это будет первый комментарий на этой странице',
+          dataValue: '12.02.22 12:18',
+          likeNum: 3,
+          likeImg: '❤'
+        },
+        {
+          mainName: 'Варвара Н.',
+          text: 'Мне нравится как оформлена эта страница! ❤',
+          dataValue: '13.02.22 19:22',
+          likeNum: 75,
+          likeImg: '❤'
+        }
+      ];
+      const renderComment = () => {
+        commentArray.map((comment) => {
+          return `<li class="comment" id="li_comment">
+          <div class="comment-header">
+            <div>${comment.mainName}</div>
+            <div>${comment.dataValue}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likeNum}</span>
+              <button class="like-button">${comment.likeImg}</button>
+            </div>
+          </div>
+        </li>
+        <li class="comment">
+          <div class="comment-header">
+            <div>${comment.mainName}</div>
+            <div>${comment.dataValue}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likeNum}</span>
+              <button class="like-button -active-like" id="like-butt">${comment.likeImg}</button>
+            </div>
+          </div>
+        </li>`
+        }).join('');
+        commentEl.innerHTML = commentArray;
+        const commentLikes = document.querySelectorAll('.like-button');
+        for (let commentLikeEl of commentLikes) {
+          commentLikeEl.addEventListener('click', () => {
+            const index = commentLikeEl.dataset.index;
+            commentArray[index].likes += 1;
+            if (commentArray[index], likeImg === "❤") {
+              commentArray[index].likes += 1;
+              commentArray[index], likeImg = "❤"
+            } else {
+              commentArray[index].likes -= 1;
+              commentArray[index], likeImg = ""
+            };
+          })
+        };
+        const commentEl = document.getElementById("ul-comment");
+        commentEl.innerHTML = commentArray.HTML;
+      };
+      // renderComment();
+    for (const likeButtonElement of likeButtonElementList) {
+        likeButtonElement.addEventListener("click", () => {
+          console.log("like");
+        });
+      }
     let date = new Date().toLocaleString();
     buttonElement.addEventListener('click', () => {
       if (nameInputElement.value === '' || textCommentElement.value === '') {
@@ -92,30 +170,13 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter">${commentArray.likeNum}</span>
+              <button class="like-button -active-like">${commentArray.likeImg}</button>
             </div>
           </div>
         </li>`;
-        });
-      // listElement.innerHTML = `<li class="comment">
-      //     <div class="comment-header">
-      //       <div>${nameInputElement.value}</div>
-      //       <div>${date}</div>
-      //     </div>
-      //     <div class="comment-body">
-      //       <div class="comment-text">
-      //         ${textCommentElement.value}
-      //       </div>
-      //     </div>
-      //     <div class="comment-footer">
-      //       <div class="likes">
-      //         <span class="likes-counter">75</span>
-      //         <button class="like-button -active-like"></button>
-      //       </div>
-      //     </div>
-      //   </li>`
-     
+        });   
     console.log("It works!");
+    // renderComment();
   </script>
 </html>
