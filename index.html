@@ -63,14 +63,15 @@
       </div>
     </div>
   </body>
-
   <script>
     // Код писать здесь время 18:30 начал кодить
+    // 1. Обработчик на class="comment-text", создать кликер, текст который будет в переменной, взять это значение и добавить в инпутвалуе.
+    // обращаюсь к массиву commentArray добавляю спец. символы для безопасности
     const buttonElement = document.getElementById('button');
     const listElement = document.getElementById('ul-comment');
     const nameInputElement = document.getElementById('name-input');
     const textCommentElement = document.getElementById('text-comment');
-    const likeButtonElementList = document.getElementsByClassName("like-button");
+    const likeButtonElementList = document.getElementsByClassName("like-button");  
     // const commentElementlist = document.getElementById('ul-comment');
     const commentArray = [
         {
@@ -112,6 +113,11 @@
         }).join('');
         listElement.innerHTML = newCommentArray;
         const commentLikes = document.querySelectorAll('.like-button');
+        // const commentAnswerText = document.querySelector(".comment-text");
+        // commentAnswerText.addEventListener('click', () => {
+        //   console.log('работает');
+        });
+        //функцию создать и пройтись с циклом с фор оф по квереселекторАЛЛ, for...each
         };
       //   for (let commentLikeEl of commentLikes) {
       //     commentLikeEl.addEventListener('click', () => {
@@ -138,7 +144,7 @@
               const index = likeButtonElement.dataset.index;
               console.log("like");
               if (commentArray[index].isLiked) {
-                commentArray[index].likeNum--;
+                // commentArray[index].likeNum--;
               } else {
                 commentArray[index].likeNum++;
               }
@@ -161,7 +167,7 @@
        commentArray.push({
         mainName: nameInputElement.value,
         text: textCommentElement.value,
-        dataValue: 0,
+        dataValue: date,
         likeNum: 0,
         isLiked: " "
       });
@@ -184,6 +190,7 @@
       //   </li>`
       renderComment();
       likeButtonEvents();
+      
         ;}); 
         renderComment();
         likeButtonEvents();  
