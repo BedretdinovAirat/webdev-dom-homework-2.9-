@@ -8,7 +8,7 @@
   <body>
     <div class="container">
       <ul id="ul-comment" class="comments">
-        <li class="comment" id="li_comment">
+        <!-- <li class="comment" id="li_comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -38,10 +38,10 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like" id="like-butt"></button>
+              <button class="like-button -active-like" id="like-butt" data-index=""></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -58,7 +58,7 @@
           id="text-comment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="button">Написать</button>
+          <button class="add-form-button" id="button" data-index="">Написать</button>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@
   <script>
     // Код писать здесь время 18:30 начал кодить
     const buttonElement = document.getElementById('button');
-    const listElement = document.getElementById('li_comment');
+    const listElement = document.getElementById('ul-comment');
     const nameInputElement = document.getElementById('name-input');
     const textCommentElement = document.getElementById('text-comment');
     const likeButtonElementList = document.getElementsByClassName("like-button");
@@ -78,18 +78,20 @@
           text: 'Это будет первый комментарий на этой странице',
           dataValue: '12.02.22 12:18',
           likeNum: 3,
-          likeImg: '❤'
+          isLiked: true
+          // likeImg: '❤'
         },
         {
           mainName: 'Варвара Н.',
           text: 'Мне нравится как оформлена эта страница! ❤',
           dataValue: '13.02.22 19:22',
           likeNum: 75,
-          likeImg: '❤'
+          isLiked: true
+          // likeImg: '❤'
         }
       ];
       const renderComment = () => {
-        commentArray.map((comment) => {
+        const newCommentArray = commentArray.map((comment, index) => {
           return `<li class="comment" id="li_comment">
           <div class="comment-header">
             <div>${comment.mainName}</div>
@@ -103,80 +105,88 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likeNum}</span>
-              <button class="like-button">${comment.likeImg}</button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>${comment.mainName}</div>
-            <div>${comment.dataValue}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likeNum}</span>
-              <button class="like-button -active-like" id="like-butt">${comment.likeImg}</button>
+              <button class="like-button ${comment.isLiked ? "-active-like" : ""}" id="like-butt" data-index="${index}"></button>
             </div>
           </div>
         </li>`
         }).join('');
-        commentEl.innerHTML = commentArray;
+        listElement.innerHTML = newCommentArray;
         const commentLikes = document.querySelectorAll('.like-button');
-        for (let commentLikeEl of commentLikes) {
-          commentLikeEl.addEventListener('click', () => {
-            const index = commentLikeEl.dataset.index;
-            commentArray[index].likes += 1;
-            if (commentArray[index], likeImg === "❤") {
-              commentArray[index].likes += 1;
-              commentArray[index], likeImg = "❤"
-            } else {
-              commentArray[index].likes -= 1;
-              commentArray[index], likeImg = ""
-            };
-          })
         };
-        const commentEl = document.getElementById("ul-comment");
-        commentEl.innerHTML = commentArray.HTML;
-      };
-      // renderComment();
-    for (const likeButtonElement of likeButtonElementList) {
-        likeButtonElement.addEventListener("click", () => {
-          console.log("like");
-        });
-      }
-    let date = new Date().toLocaleString();
+      //   for (let commentLikeEl of commentLikes) {
+      //     commentLikeEl.addEventListener('click', () => {
+      //       const index = commentLikeEl.dataset.index;
+      //       commentArray[index].likes += 1;
+      //       if (commentArray[index] === "") {
+      //         commentArray[index].likes += 1;
+      //         commentArray[index], likeImg = ""
+      //       } else {
+      //         commentArray[index].likes -= 1;
+      //         commentArray[index], likeImg = ""
+      //       };
+      //     })
+      //   }
+    //   let likeNumber = 0;
+    //   commentLikes.addEventListener('click', () => {        
+    //   likeNumber++;
+    //   if(likeNumber === 1) listElement.innerHTML = likeNumber + 1;
+    //   else listElement.innerHTML = likeNumber + 0;
+    // });
+      const likeButtonEvents = () => {
+          for (const likeButtonElement of likeButtonElementList) {
+            likeButtonElement.addEventListener("click", () => {
+              const index = likeButtonElement.dataset.index;
+              console.log("like");
+              if (commentArray[index].isLiked) {
+                commentArray[index].likeNum--;
+              } else {
+                commentArray[index].likeNum++;
+              }
+
+              commentArray[index].isLiked = !commentArray[index].isLiked
+
+              renderComment()
+              likeButtonEvents()
+            });
+          }
+
+        };
     buttonElement.addEventListener('click', () => {
+      let date = new Date().toLocaleString();
       if (nameInputElement.value === '' || textCommentElement.value === '') {
         nameInputElement.classList.add('error');
         // nameInputElement.style.backgroundColor = 'red';
         return;
       };
-      // const oldTextHtml = listElement.innerHTML;
-      const list = document.getElementById("ul-comment");
-      const oldTextHtml = list.innerHTML += `<li class="comment">
-        <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textCommentElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${commentArray.likeNum}</span>
-              <button class="like-button -active-like">${commentArray.likeImg}</button>
-            </div>
-          </div>
-        </li>`;
-        });   
+       commentArray.push({
+        mainName: nameInputElement.value,
+        text: textCommentElement.value,
+        dataValue: 0,
+        likeNum: 0,
+        isLiked: " "
+      });
+      // const oldTextHtml = listElement.innerHTML += `<li class="comment">
+      //   <div class="comment-header">
+      //       <div>${nameInputElement.value}</div>
+      //       <div>${date}</div>
+      //     </div>
+      //     <div class="comment-body">
+      //       <div class="comment-text">
+      //         ${textCommentElement.value}
+      //       </div>
+      //     </div>
+      //     <div class="comment-footer">
+      //       <div class="likes">
+      //         <span class="likes-counter">❤</span>
+      //         <button class="like-button -active-like"></button>
+      //       </div>
+      //     </div>
+      //   </li>`
+      renderComment();
+      likeButtonEvents();
+        ;}); 
+        renderComment();
+        likeButtonEvents();  
     console.log("It works!");
-    // renderComment();
   </script>
 </html>
