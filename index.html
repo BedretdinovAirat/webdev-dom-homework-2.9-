@@ -116,28 +116,9 @@
         // const commentAnswerText = document.querySelector(".comment-text");
         // commentAnswerText.addEventListener('click', () => {
         //   console.log('работает');
-        });
+        // });
         //функцию создать и пройтись с циклом с фор оф по квереселекторАЛЛ, for...each
         };
-      //   for (let commentLikeEl of commentLikes) {
-      //     commentLikeEl.addEventListener('click', () => {
-      //       const index = commentLikeEl.dataset.index;
-      //       commentArray[index].likes += 1;
-      //       if (commentArray[index] === "") {
-      //         commentArray[index].likes += 1;
-      //         commentArray[index], likeImg = ""
-      //       } else {
-      //         commentArray[index].likes -= 1;
-      //         commentArray[index], likeImg = ""
-      //       };
-      //     })
-      //   }
-    //   let likeNumber = 0;
-    //   commentLikes.addEventListener('click', () => {        
-    //   likeNumber++;
-    //   if(likeNumber === 1) listElement.innerHTML = likeNumber + 1;
-    //   else listElement.innerHTML = likeNumber + 0;
-    // });
       const likeButtonEvents = () => {
           for (const likeButtonElement of likeButtonElementList) {
             likeButtonElement.addEventListener("click", () => {
@@ -164,12 +145,21 @@
         // nameInputElement.style.backgroundColor = 'red';
         return;
       };
+      // commentArray.push({
+        
+      // });
+      // students.push({
+      //   name: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
+      //   color: colorInputElement.value,
+      // });
        commentArray.push({
-        mainName: nameInputElement.value,
-        text: textCommentElement.value,
+        mainName: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
+        text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
         dataValue: date,
         likeNum: 0,
-        isLiked: " "
+        isLiked: " ",
+        // mainName: nameInputElement.value.
+        // text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt')
       });
       // const oldTextHtml = listElement.innerHTML += `<li class="comment">
       //   <div class="comment-header">
