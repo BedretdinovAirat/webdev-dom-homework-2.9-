@@ -72,7 +72,6 @@
     const nameInputElement = document.getElementById('name-input');
     const textCommentElement = document.getElementById('text-comment');
     const likeButtonElementList = document.getElementsByClassName("like-button");  
-    // const commentElementlist = document.getElementById('ul-comment');
     const commentArray = [
         {
           mainName: 'Глеб Фокин',
@@ -112,16 +111,29 @@
         </li>`
         }).join('');
         listElement.innerHTML = newCommentArray;
+        const valueCommentText = document.querySelector('.add-form-text');
+        const nameCommentText = document.querySelector('.add-form-name');
         const commentLikes = document.querySelectorAll('.like-button');
-        // const commentAnswerText = document.querySelector(".comment-text");
+        // const commentAnswerText = document.querySelectorAll(".comment-text");
+        const commentAnswerText = document.querySelectorAll(".comment");
+        const nameAnswerText = document.querySelector(".comment-header");
         // commentAnswerText.addEventListener('click', () => {
-        //   console.log('работает');
-        // });
+        //   valueCommentText.value = commentAnswerText.textContent;
+        //   nameCommentText.value = nameAnswerText.textContent;
+        // })
         //функцию создать и пройтись с циклом с фор оф по квереселекторАЛЛ, for...each
-        };
+        // console.log(commentAnswerText);
+        commentAnswerText.forEach((item) => {
+          item.addEventListener('click', () => {
+            valueCommentText.value = item.textContent;
+            nameCommentText.value = item.textContent;
+          })
+        })
+      };
       const likeButtonEvents = () => {
           for (const likeButtonElement of likeButtonElementList) {
-            likeButtonElement.addEventListener("click", () => {
+            likeButtonElement.addEventListener("click", (event) => {
+              event.stopPropagation();
               const index = likeButtonElement.dataset.index;
               console.log("like");
               if (commentArray[index].isLiked) {
@@ -129,37 +141,24 @@
               } else {
                 commentArray[index].likeNum++;
               }
-
               commentArray[index].isLiked = !commentArray[index].isLiked
-
               renderComment()
               likeButtonEvents()
             });
           }
-
         };
     buttonElement.addEventListener('click', () => {
       let date = new Date().toLocaleString();
       if (nameInputElement.value === '' || textCommentElement.value === '') {
         nameInputElement.classList.add('error');
-        // nameInputElement.style.backgroundColor = 'red';
         return;
       };
-      // commentArray.push({
-        
-      // });
-      // students.push({
-      //   name: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
-      //   color: colorInputElement.value,
-      // });
        commentArray.push({
         mainName: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
         text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
         dataValue: date,
         likeNum: 0,
-        isLiked: " ",
-        // mainName: nameInputElement.value.
-        // text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt')
+        isLiked: " "
       });
       // const oldTextHtml = listElement.innerHTML += `<li class="comment">
       //   <div class="comment-header">
@@ -180,7 +179,6 @@
       //   </li>`
       renderComment();
       likeButtonEvents();
-      
         ;}); 
         renderComment();
         likeButtonEvents();  
