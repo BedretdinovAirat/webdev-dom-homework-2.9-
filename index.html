@@ -72,23 +72,23 @@
     const nameInputElement = document.getElementById('name-input');
     const textCommentElement = document.getElementById('text-comment');
     const likeButtonElementList = document.getElementsByClassName("like-button");  
-    const commentArray = [
-        {
-          mainName: 'Глеб Фокин',
-          text: 'Это будет первый комментарий на этой странице',
-          dataValue: '12.02.22 12:18',
-          likeNum: 3,
-          isLiked: true
-          // likeImg: '❤'
-        },
-        {
-          mainName: 'Варвара Н.',
-          text: 'Мне нравится как оформлена эта страница! ❤',
-          dataValue: '13.02.22 19:22',
-          likeNum: 75,
-          isLiked: true
-          // likeImg: '❤'
-        }
+    let commentArray = [
+        // {
+        //   mainName: 'Глеб Фокин',
+        //   text: 'Это будет первый комментарий на этой странице',
+        //   dataValue: '12.02.22 12:18',
+        //   likeNum: 3,
+        //   isLiked: true
+        //   // likeImg: '❤'
+        // },
+        // {
+        //   mainName: 'Варвара Н.',
+        //   text: 'Мне нравится как оформлена эта страница! ❤',
+        //   dataValue: '13.02.22 19:22',
+        //   likeNum: 75,
+        //   isLiked: true
+        //   // likeImg: '❤'
+        // }
       ];
       const renderComment = () => {
         const newCommentArray = commentArray.map((comment, index) => {
@@ -114,70 +114,106 @@
         const valueCommentText = document.querySelector('.add-form-text');
         const nameCommentText = document.querySelector('.add-form-name');
         const commentLikes = document.querySelectorAll('.like-button');
-        // const commentAnswerText = document.querySelectorAll(".comment-text");
         const commentAnswerText = document.querySelectorAll(".comment");
         const nameAnswerText = document.querySelector(".comment-header");
-        // commentAnswerText.addEventListener('click', () => {
-        //   valueCommentText.value = commentAnswerText.textContent;
-        //   nameCommentText.value = nameAnswerText.textContent;
-        // })
+        // let commentArray = [];
         //функцию создать и пройтись с циклом с фор оф по квереселекторАЛЛ, for...each
-        // console.log(commentAnswerText);
+        // 17.04.2023 0:10 API 2.12 https://webdev-hw-api.vercel.app/api/v1/airat-bedretdinov/comments
         commentAnswerText.forEach((item) => {
-          item.addEventListener('click', () => {
-            valueCommentText.value = item.textContent;
-            nameCommentText.value = item.textContent;
-          })
-        })
+          item.addEventListener("click", () => {
+            valueCommentText.value =
+              "> " + item.textContent.replace(/\s+/g, " ").trim();
+          });
+        });
       };
+      const postCommentsPromise = () => {
+          fetch(
+            "https://webdev-hw-api.vercel.app/api/v1/airat-bedretdinov/comments",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                name: nameInputElement.value,
+                text: textCommentElement.value,
+              }),
+            });
+            renderComment();
+        };
+        postCommentsPromise();
+      const fetchComments = () => {
+        const getCommentsPromise = fetch(
+          "https://webdev-hw-api.vercel.app/api/v1/airat-bedretdinov/comments",
+          {
+            method: "GET",
+          }
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+              return {
+                mainName: comment.author.name,
+                dataValue: new Date(comment.date).toLocaleString(),
+                text: comment.text,
+                likeNum: comment.likes,
+                isLiked: "like-button",
+              };
+            });
+            commentArray = appComments;
+            // console.log(commentArray);
+            renderComment();
+          });
+      };
+      fetchComments();
       const likeButtonEvents = () => {
           for (const likeButtonElement of likeButtonElementList) {
-            likeButtonElement.addEventListener("click", (event) => {
-              event.stopPropagation();
+            likeButtonElement.addEventListener("click", (event) => {       
+              // event.stopPropagation();
               const index = likeButtonElement.dataset.index;
               console.log("like");
               if (commentArray[index].isLiked) {
+                if (commentArray[index].likeNum) commentArray[index].likeNum--;
                 // commentArray[index].likeNum--;
               } else {
                 commentArray[index].likeNum++;
               }
               commentArray[index].isLiked = !commentArray[index].isLiked
+              event.stopPropagation();
               renderComment()
               likeButtonEvents()
             });
           }
         };
+        
+          // const postCommentsPromise = fetch(
+          //   'https://webdev-hw-api.vercel.app/api/v1/airat-bedretdinov/comments',
+          //   {
+          //     method: "POST",
+          //     body: JSON.stringify({
+          //       "name": nameInputElement.value,
+          //       "text": textCommentElement.value,
+          //     })
+          //   });
+          // postCommentsPromise.then((response) => {
+          //   const jsonPostCommentsPromise = response.json();
+          //   jsonPostCommentsPromise.then((responseData) => {
+          //     commentArray = responseData.comments;
+          //   })
+          // });
     buttonElement.addEventListener('click', () => {
       let date = new Date().toLocaleString();
       if (nameInputElement.value === '' || textCommentElement.value === '') {
         nameInputElement.classList.add('error');
         return;
       };
-       commentArray.push({
-        mainName: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
-        text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
-        dataValue: date,
-        likeNum: 0,
-        isLiked: " "
-      });
-      // const oldTextHtml = listElement.innerHTML += `<li class="comment">
-      //   <div class="comment-header">
-      //       <div>${nameInputElement.value}</div>
-      //       <div>${date}</div>
-      //     </div>
-      //     <div class="comment-body">
-      //       <div class="comment-text">
-      //         ${textCommentElement.value}
-      //       </div>
-      //     </div>
-      //     <div class="comment-footer">
-      //       <div class="likes">
-      //         <span class="likes-counter">❤</span>
-      //         <button class="like-button -active-like"></button>
-      //       </div>
-      //     </div>
-      //   </li>`
-      renderComment();
+      //  commentArray.push({
+      //   mainName: nameInputElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
+      //   text: textCommentElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
+      //   dataValue: date,
+      //   likeNum: 0,
+      //   isLiked: " "
+      // });
+      // renderComment();
       likeButtonEvents();
         ;}); 
         renderComment();
