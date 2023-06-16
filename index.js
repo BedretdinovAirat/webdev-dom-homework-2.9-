@@ -12,10 +12,7 @@ function validation() {
   }
 }
 validation();
-// создали фукнцию с условием, вызвали функцию, потом создали событие для полей ввода и добавили аргументом эту функцию
-nameInputElement.addEventListener("input", validation);
-textInputElement.addEventListener("input", validation);
-buttonElement.addEventListener("click", () => {
+function newComment() {
   const oldListHtml = listElement.innerHTML;
   listElement.innerHTML =
     oldListHtml +
@@ -41,33 +38,42 @@ buttonElement.addEventListener("click", () => {
   nameInputElement.value = "";
   textInputElement.value = "";
   buttonElement.disabled = true;
+}
+// создали фукнцию с условием, вызвали функцию, потом создали событие для полей ввода и добавили аргументом эту функцию
+nameInputElement.addEventListener("input", validation);
+textInputElement.addEventListener("input", validation);
+
+buttonElement.addEventListener("click", () => {
+  newComment();
+  // const oldListHtml = listElement.innerHTML;
+  // listElement.innerHTML =
+  //   oldListHtml +
+  //   `<ul id="ul-comment" class="comments">
+  //       <li class="comment" id="li_comment">
+  //         <div class="comment-header">
+  //           <div>${nameInputElement.value}</div>
+  //           <div>${data.toLocaleString()}</div>
+  //         </div>
+  //         <div class="comment-body">
+  //           <div class="comment-text">
+  //             ${textInputElement.value}
+  //           </div>
+  //         </div>
+  //         <div class="comment-footer">
+  //           <div class="likes">
+  //             <span class="likes-counter">0</span>
+  //             <button class="like-button"></button>
+  //           </div>
+  //         </div>
+  //       </li>
+  //       </ul>`;
+  // nameInputElement.value = "";
+  // textInputElement.value = "";
+  // buttonElement.disabled = true;
 });
 textInputElement.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-      oldListHtml +
-      `<ul id="ul-comment" class="comments">
-        <li class="comment" id="li_comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${data.toLocaleString()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        </ul>`;
-        nameInputElement.value = "";
-        textInputElement.value = "";
+    newComment();
   }
 })
 // удаление 
