@@ -3,6 +3,7 @@ const listElement = document.getElementById("ul-comment");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-comment");
 const deleteButtonElement = document.getElementById("delete__button");
+// const likeButtonElement = document.querySelector(".like-button");
 const data = new Date();
 
 const comments = [
@@ -11,20 +12,52 @@ const comments = [
     text: "Это будет первый комментарий на этой странице",
     data: "12.02.22 12:18",
     count: "3",
-    like: "❤",
+    like: false,
   },
   {
     name: "Варвара Н.",
     text: "Мне нравится как оформлена эта страница! ❤",
     data: "13.02.22 19:22",
     count: "75",
-    like: "❤",
+    like: false,
   },
 ];
-
+// countLikeElement();
+const countLikeElement = () => {
+  const buttonLikeElements = document.querySelectorAll(".like-button");
+  for (const buttonLikeElement of buttonLikeElements) {
+    const index = buttonLikeElement.dataset.index;
+    buttonLikeElement.addEventListener("click", () => {
+      if (comments[index].like) {
+        comments[index].count = comments[index].count += 1;
+        comments[index].like = false;
+      } else {
+        comments[index].count = comments[index].count -= 1;
+        comments[index].like = true;
+      }
+      // console.log("проверяю счетчик");
+      // console.log(index);
+      renderComments();
+      countLikes();
+    });
+  }
+};
+const countLikes = () => {
+  const likeButtonElements = document.querySelectorAll(".like-button");
+  for (const likeButtonElement of likeButtonElements) {
+    likeButtonElement.addEventListener("click", () => {
+      // likeButtonElement.classList.toggle("-active-like");
+      if (comments.like === false) {
+        comments.like = true;
+      } else {
+        comments.like = false;
+      }
+    });
+  }
+};
 const renderComments = () => {
   const commentsHtml = comments
-    .map((comment) => {
+    .map((comment, index) => {
       return `<ul id="ul-comment" class="comments">
         <li class="comment" id="li_comment">
           <div class="comment-header">
@@ -39,20 +72,21 @@ const renderComments = () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.count}</span>
-              <button class="like-button">${comment.like}</button>
+              <button data-index="${index}" class="like-button"></button>
             </div>
           </div>
         </li>
         </ul>`;
     })
     .join("");
-    listElement.innerHTML = commentsHtml;
-    nameInputElement.value = "";
-    textInputElement.value = "";
-    buttonElement.disabled = true;
+  listElement.innerHTML = commentsHtml;
+  nameInputElement.value = "";
+  textInputElement.value = "";
+  buttonElement.disabled = true;
+  countLikes();
+  countLikeElement();
 };
 renderComments();
-
 const validation = () => {
   if (nameInputElement.value && textInputElement.value) {
     buttonElement.disabled = false;
@@ -61,68 +95,32 @@ const validation = () => {
   }
 };
 validation();
-// const newComment = () => {
-//   // const oldListHtml = listElement.innerHTML;
-//   // listElement.innerHTML =
-//   //   oldListHtml +
-//   //   `<ul id="ul-comment" class="comments">
-//   //       <li class="comment" id="li_comment">
-//   //         <div class="comment-header">
-//   //           <div>${nameInputElement.value}</div>
-//   //           <div>${data.toLocaleString()}</div>
-//   //         </div>
-//   //         <div class="comment-body">
-//   //           <div class="comment-text">
-//   //             ${textInputElement.value}
-//   //           </div>
-//   //         </div>
-//   //         <div class="comment-footer">
-//   //           <div class="likes">
-//   //             <span class="likes-counter">0</span>
-//   //             <button class="like-button"></button>
-//   //           </div>
-//   //         </div>
-//   //       </li>
-//   //       </ul>`;
-//   // nameInputElement.value = "";
-//   // textInputElement.value = "";
-//   // buttonElement.disabled = true;
-// };
 // создали фукнцию с условием, вызвали функцию, потом создали событие для полей ввода и добавили аргументом эту функцию
 nameInputElement.addEventListener("input", validation);
 textInputElement.addEventListener("input", validation);
 
+const commentPush = () => {
+  comments.push({
+    name: nameInputElement.value,
+    text: textInputElement.value,
+    data: data.toLocaleString(),
+    count: 0,
+    like: true,
+  });
+};
+// commentPush();
 buttonElement.addEventListener("click", () => {
+  commentPush();
   renderComments();
-  // const oldListHtml = listElement.innerHTML;
-  // listElement.innerHTML =
-  //   oldListHtml +
-  //   `<ul id="ul-comment" class="comments">
-  //       <li class="comment" id="li_comment">
-  //         <div class="comment-header">
-  //           <div>${nameInputElement.value}</div>
-  //           <div>${data.toLocaleString()}</div>
-  //         </div>
-  //         <div class="comment-body">
-  //           <div class="comment-text">
-  //             ${textInputElement.value}
-  //           </div>
-  //         </div>
-  //         <div class="comment-footer">
-  //           <div class="likes">
-  //             <span class="likes-counter">0</span>
-  //             <button class="like-button"></button>
-  //           </div>
-  //         </div>
-  //       </li>
-  //       </ul>`;
-  // nameInputElement.value = "";
-  // textInputElement.value = "";
-  // buttonElement.disabled = true;
+  countLikeElement();
+  countLikes();
 });
 textInputElement.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
+    commentPush();
     renderComments();
+    countLikeElement();
+    countLikes();
   }
 });
 // удаление
