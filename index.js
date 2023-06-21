@@ -35,26 +35,23 @@ const countLikeElement = () => {
         comments[index].count = comments[index].count -= 1;
         comments[index].like = true;
       }
-      // console.log("проверяю счетчик");
-      // console.log(index);
       renderComments();
-      countLikes();
     });
   }
 };
-const countLikes = () => {
-  const likeButtonElements = document.querySelectorAll(".like-button");
-  for (const likeButtonElement of likeButtonElements) {
-    likeButtonElement.addEventListener("click", () => {
-      // likeButtonElement.classList.toggle("-active-like");
-      if (comments.like === false) {
-        comments.like = true;
-      } else {
-        comments.like = false;
-      }
-    });
-  }
-};
+// const countLikes = () => {
+//   const likeButtonElements = document.querySelectorAll(".like-button");
+//   for (const likeButtonElement of likeButtonElements) {
+//     likeButtonElement.addEventListener("click", () => {
+//       likeButtonElement.classList.toggle("-active-like");
+//       // if (comments.like === false) {
+//       //   comments.like = true;
+//       // } else {
+//       //   comments.like = false;
+//       // }
+//     });
+//   }
+// };
 const renderComments = () => {
   const commentsHtml = comments
     .map((comment, index) => {
@@ -71,8 +68,11 @@ const renderComments = () => {
           </div>
           <div class="comment-footer">
             <div class="likes">
+            
               <span class="likes-counter">${comment.count}</span>
-              <button data-index="${index}" class="like-button"></button>
+              <button data-index="${index}" class="like-button ${
+        comment.like ? "-active-like" : ""
+      }"></button>
             </div>
           </div>
         </li>
@@ -83,7 +83,6 @@ const renderComments = () => {
   nameInputElement.value = "";
   textInputElement.value = "";
   buttonElement.disabled = true;
-  countLikes();
   countLikeElement();
 };
 renderComments();
@@ -113,14 +112,12 @@ buttonElement.addEventListener("click", () => {
   commentPush();
   renderComments();
   countLikeElement();
-  countLikes();
 });
 textInputElement.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     commentPush();
     renderComments();
     countLikeElement();
-    countLikes();
   }
 });
 // удаление
