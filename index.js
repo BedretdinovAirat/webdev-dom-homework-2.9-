@@ -11,17 +11,18 @@ const comments = [
     name: "Глеб Фокин",
     text: "Это будет первый комментарий на этой странице",
     data: "12.02.22 12:18",
-    count: "3",
+    count: 3,
     like: false,
   },
   {
     name: "Варвара Н.",
     text: "Мне нравится как оформлена эта страница! ❤",
     data: "13.02.22 19:22",
-    count: "75",
+    count: 75,
     like: false,
   },
 ];
+//  находится элемент, отрисовка в иннер html, в addEventListener
 // countLikeElement();
 const countLikeElement = () => {
   const buttonLikeElements = document.querySelectorAll(".like-button");
@@ -29,10 +30,10 @@ const countLikeElement = () => {
     const index = buttonLikeElement.dataset.index;
     buttonLikeElement.addEventListener("click", () => {
       if (comments[index].like) {
-        comments[index].count = comments[index].count += 1;
+        comments[index].count = comments[index].count -= 1;
         comments[index].like = false;
       } else {
-        comments[index].count = comments[index].count -= 1;
+        comments[index].count = comments[index].count += 1;
         comments[index].like = true;
       }
       renderComments();
@@ -104,7 +105,7 @@ const commentPush = () => {
     text: textInputElement.value,
     data: data.toLocaleString(),
     count: 0,
-    like: true,
+    like: false,
   });
 };
 // commentPush();
