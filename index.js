@@ -86,11 +86,7 @@ const answerComments = () => {
 };
 answerComments();
 const validation = () => {
-  if (nameInputElement.value && textInputElement.value) {
-    buttonElement.disabled = false;
-  } else {
-    buttonElement.disabled = true;
-  }
+  buttonElement.disabled = !nameInputElement.value || !textInputElement.value;
 };
 validation();
 // создали фукнцию с условием, вызвали функцию, потом создали событие для полей ввода и добавили аргументом эту функцию
