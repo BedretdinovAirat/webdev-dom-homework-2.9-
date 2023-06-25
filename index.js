@@ -3,7 +3,8 @@ const listElement = document.getElementById("ul-comment");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-comment");
 const deleteButtonElement = document.getElementById("delete__button");
-// const likeButtonElement = document.querySelector(".like-button");
+const buttonRedactionElement = document.getElementById("button-redaction");
+const textCommentElement = document.getElementById(".text");
 const data = new Date();
 
 const comments = [
@@ -23,7 +24,6 @@ const comments = [
   },
 ];
 //  находится элемент, отрисовка в иннер html, в addEventListener
-// countLikeElement();
 const countLikeElement = () => {
   const buttonLikeElements = document.querySelectorAll(".like-button");
   for (const buttonLikeElement of buttonLikeElements) {
@@ -40,26 +40,13 @@ const countLikeElement = () => {
     });
   }
 };
-// const countLikes = () => {
-//   const likeButtonElements = document.querySelectorAll(".like-button");
-//   for (const likeButtonElement of likeButtonElements) {
-//     likeButtonElement.addEventListener("click", () => {
-//       likeButtonElement.classList.toggle("-active-like");
-//       // if (comments.like === false) {
-//       //   comments.like = true;
-//       // } else {
-//       //   comments.like = false;
-//       // }
-//     });
-//   }
-// };
 const renderComments = () => {
   const commentsHtml = comments
     .map((comment, index) => {
       return `<ul id="ul-comment" class="comments">
         <li class="comment" id="li_comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div class="comment-name">${comment.name}</div>
             <div>${comment.data}</div>
           </div>
           <div class="comment-body">
@@ -69,7 +56,6 @@ const renderComments = () => {
           </div>
           <div class="comment-footer">
             <div class="likes">
-            
               <span class="likes-counter">${comment.count}</span>
               <button data-index="${index}" class="like-button ${
         comment.like ? "-active-like" : ""
@@ -87,6 +73,18 @@ const renderComments = () => {
   countLikeElement();
 };
 renderComments();
+const textConclusions = document.querySelectorAll(".comment-text");
+const liComments = document.querySelectorAll(".comment");
+const answerComments = () => {
+  for (const liComment of liComments) {
+    const answerLiComment = liComment.querySelector(".comment-text");
+    const answerLiName = liComment.querySelector(".comment-name");
+    answerLiComment.addEventListener("click", () => {
+      textInputElement.value = `${answerLiComment.textContent} ${answerLiName.textContent}`;
+    });
+  }
+};
+answerComments();
 const validation = () => {
   if (nameInputElement.value && textInputElement.value) {
     buttonElement.disabled = false;
@@ -101,24 +99,33 @@ textInputElement.addEventListener("input", validation);
 
 const commentPush = () => {
   comments.push({
-    name: nameInputElement.value,
-    text: textInputElement.value,
+    name: nameInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+    text: textInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
     data: data.toLocaleString(),
     count: 0,
     like: false,
   });
 };
-// commentPush();
 buttonElement.addEventListener("click", () => {
   commentPush();
   renderComments();
   countLikeElement();
+  answerComments();
 });
 textInputElement.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     commentPush();
     renderComments();
     countLikeElement();
+    answerComments();
   }
 });
 // удаление
@@ -132,3 +139,13 @@ deleteButtonElement.addEventListener("click", () => {
     lastElement.remove();
   }
 });
+// 1. Найти элемент текст ареа, можно просто по queryselector
+// 2. С циклом фор оф перебирать каждый нужный нам элемент текст ареа для того чтобы повесить то что нам нужно
+// 3. Вешаем обработчик событий на этот элемент
+// 4. Должно получиться
+// 5.
+// 6.
+// 7.
+// 8.
+// 9.
+// 10.
