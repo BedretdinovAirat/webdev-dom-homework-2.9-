@@ -19,12 +19,12 @@ fetchPromise.then((response) => {
   const jsonPromise = response.json();
   jsonPromise.then((responseData) => {
     console.log(responseData);
-    listComments = responseData.comments;
+    comments = responseData.comments;
     renderComments();
   })
 });
 
-const comments = [];
+let comments = [];
 //  находится элемент, отрисовка в иннер html, в addEventListener
 const redactionText = () => {
   const buttonRedactionElements =
@@ -48,12 +48,12 @@ const countLikeElement = () => {
   for (const buttonLikeElement of buttonLikeElements) {
     const index = buttonLikeElement.dataset.index;
     buttonLikeElement.addEventListener("click", () => {
-      if (comments[index].like) {
-        comments[index].count = comments[index].count -= 1;
-        comments[index].like = false;
+      if (comments[index].isLiked) {
+        comments[index].likes = comments[index].likes -= 1;
+        comments[index].isLiked = false;
       } else {
-        comments[index].count = comments[index].count += 1;
-        comments[index].like = true;
+        comments[index].likes = comments[index].likes += 1;
+        comments[index].isLiked = true;
       }
       renderComments();
     });
@@ -65,8 +65,8 @@ const renderComments = () => {
       return `<ul id="ul-comment" class="comments">
         <li class="comment" id="li_comment">
           <div class="comment-header">
-            <div class="comment-name">${comment.name}</div>
-            <div>${comment.data}</div>
+            <div class="comment-name">${comment.author.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             ${
@@ -79,9 +79,9 @@ const renderComments = () => {
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.count}</span>
+              <span class="likes-counter">${comment.likes}</span> 
               <button data-index="${index}" class="like-button ${
-        comment.like ? "-active-like" : ""
+        comment.isLiked ? "-active-like" : ""
       }"></button>
             </div>
           </div>
@@ -96,7 +96,7 @@ const renderComments = () => {
         </div>
         </li>
         </ul>`;
-    })
+    }) // count менял на лайки
     .join("");
   listElement.innerHTML = commentsHtml;
   nameInputElement.value = "";
@@ -133,8 +133,8 @@ const commentPush = () => {
     method: "POST",
     body: JSON.stringify(
       { 
-      "text": "Текст коммента", 
-      "name": "Глеб Ф." 
+      text: textInputElement.value, 
+      name: nameInputElement.value, 
     }),
   }).then((response) => {
     response.json().then((responseData) => {
@@ -169,6 +169,16 @@ deleteButtonElement.addEventListener("click", () => {
     const lastElement = allComment[allComment.length - 1];
     lastElement.remove();
   }
+  
+  // fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments" + id, {
+  //   method: "DELETE",
+  // }).then((response) => {
+  //   response.json().then((responseData) => {
+  //     console.log(responseData);
+  //     listComments = responseData.comments;
+  //     renderComments();
+  //   });
+  // });
 });
 // 1. Найти элемент текст ареа, можно просто по queryselector
 // 2. С циклом фор оф перебирать каждый нужный нам элемент текст ареа для того чтобы повесить то что нам нужно
