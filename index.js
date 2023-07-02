@@ -5,25 +5,44 @@ const textInputElement = document.getElementById("text-comment");
 const deleteButtonElement = document.getElementById("delete__button");
 const buttonRedactionElement = document.getElementById("button-redaction");
 const textCommentElement = document.getElementById(".text");
+
 const data = new Date();
 
-const comments = [
+const fetchPromise = fetch(
+  "https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments",
   {
-    name: "Глеб Фокин",
-    text: "Это будет первый комментарий на этой странице",
-    data: "12.02.22 12:18",
-    count: 3,
-    like: false,
-  },
-  {
-    name: "Варвара Н.",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    data: "13.02.22 19:22",
-    count: 75,
-    like: false,
-  },
-];
+    method: "GET",
+  }
+);
+
+fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    console.log(responseData);
+    listComments = responseData.comments;
+    renderComments();
+  })
+});
+
+const comments = [];
 //  находится элемент, отрисовка в иннер html, в addEventListener
+const redactionText = () => {
+  const buttonRedactionElements =
+    document.querySelectorAll(".button-redaction");
+  for (const buttonRedactionElement of buttonRedactionElements) {
+    const index = buttonRedactionElement.dataset.index;
+    buttonRedactionElement.addEventListener("click", () => {
+      if (comments[index].isEdit) {
+        const textArea = document.getElementById(index);
+        comments[index].isEdit = false;
+        comments[index].text = textArea.value;
+      } else {
+        comments[index].isEdit = true;
+      }
+      renderComments();
+    });
+  }
+};
 const countLikeElement = () => {
   const buttonLikeElements = document.querySelectorAll(".like-button");
   for (const buttonLikeElement of buttonLikeElements) {
@@ -50,9 +69,13 @@ const renderComments = () => {
             <div>${comment.data}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            ${
+              comment.isEdit
+                ? `<textarea id=${index}>${comment.text}</textarea>`
+                : `<div class="comment-text">
               ${comment.text}
-            </div>
+            </div>`
+            }
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -62,6 +85,15 @@ const renderComments = () => {
       }"></button>
             </div>
           </div>
+          <div class="add-form-row">
+          <button class="add-form-button button-redaction" data-index="${index}">
+            ${
+              comment.isEdit
+                ? "Сохранить комментарий"
+                : "Редактировать комментарий"
+            } 
+          </button>
+        </div>
         </li>
         </ul>`;
     })
@@ -71,6 +103,7 @@ const renderComments = () => {
   textInputElement.value = "";
   buttonElement.disabled = true;
   countLikeElement();
+  redactionText();
 };
 renderComments();
 const textConclusions = document.querySelectorAll(".comment-text");
@@ -79,9 +112,11 @@ const answerComments = () => {
   for (const liComment of liComments) {
     const answerLiComment = liComment.querySelector(".comment-text");
     const answerLiName = liComment.querySelector(".comment-name");
-    answerLiComment.addEventListener("click", () => {
-      textInputElement.value = `${answerLiComment.textContent} ${answerLiName.textContent}`;
-    });
+    if (answerLiComment && answerLiName) {
+      answerLiComment.addEventListener("click", () => {
+        textInputElement.value = `QUOTE_BEGIN ${answerLiComment.textContent} ${answerLiName.textContent} QUOTE_END`;
+      });
+    }
   }
 };
 answerComments();
@@ -92,22 +127,21 @@ validation();
 // создали фукнцию с условием, вызвали функцию, потом создали событие для полей ввода и добавили аргументом эту функцию
 nameInputElement.addEventListener("input", validation);
 textInputElement.addEventListener("input", validation);
-
+// безумный прогресс понял
 const commentPush = () => {
-  comments.push({
-    name: nameInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-    text: textInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-    data: data.toLocaleString(),
-    count: 0,
-    like: false,
+  fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
+    method: "POST",
+    body: JSON.stringify(
+      { 
+      "text": "Текст коммента", 
+      "name": "Глеб Ф." 
+    }),
+  }).then((response) => {
+    response.json().then((responseData) => {
+      console.log(responseData);
+      listComments = responseData.comments;
+      renderComments();
+    });
   });
 };
 buttonElement.addEventListener("click", () => {
@@ -117,7 +151,8 @@ buttonElement.addEventListener("click", () => {
   answerComments();
 });
 textInputElement.addEventListener("keyup", (e) => {
-  if (e.key === "Enter") {
+  // e.key === "Enter" перенос строки на интер
+  if (e.key === "Shift") {
     commentPush();
     renderComments();
     countLikeElement();

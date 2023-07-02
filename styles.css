@@ -63,7 +63,9 @@ body {
   .comment-text {
     font-size: 32px;
   }
-
+  .answer__comment {
+    
+  }
   .likes {
     display: flex;
     align-items: center;
