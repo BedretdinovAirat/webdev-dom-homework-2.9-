@@ -8,21 +8,24 @@ const textCommentElement = document.getElementById(".text");
 
 const data = new Date();
 
-const fetchPromise = fetch(
-  "https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments",
-  {
-    method: "GET",
-  }
-);
+const getFetch = () => {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments",
+    {
+      method: "GET",
+    }
+  );
 
-fetchPromise.then((response) => {
-  const jsonPromise = response.json();
-  jsonPromise.then((responseData) => {
-    console.log(responseData);
-    comments = responseData.comments;
-    renderComments();
-  })
-});
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      console.log(responseData);
+      comments = responseData.comments;
+      renderComments();
+    });
+  });
+}
+getFetch();
 
 let comments = [];
 //  находится элемент, отрисовка в иннер html, в addEventListener
@@ -143,6 +146,7 @@ const commentPush = () => {
       renderComments();
     });
   });
+  getFetch();
 };
 buttonElement.addEventListener("click", () => {
   commentPush();
