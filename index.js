@@ -4,29 +4,40 @@ const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-comment");
 const deleteButtonElement = document.getElementById("delete__button");
 const buttonRedactionElement = document.getElementById("button-redaction");
-const textCommentElement = document.getElementById(".text");
-
+const contentContainer = document.querySelector(".container");
+const loaderElement = document.querySelector(".loader");
+// const mainLoader = document.querySelector(".main__loader");
+// const textCommentElement = document.getElementById("text");
 const data = new Date();
+// const loaderDate = () => {
+// window.addEventListener("load", () => {
+// mainLoader.classList.add("hide");
+// setTimeout(() => {
+// mainLoader.remove();
+// }, 1000);
+// });
+// };
+// loaderDate();
+// contentContainer.textContent = "контент загружается";
+
+//  про классы API, promise - напомнить
 
 const getFetch = () => {
-  const fetchPromise = fetch(
-    "https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments",
-    {
-      method: "GET",
-    }
-  );
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      console.log(responseData);
+  loaderElement.textContent =
+    "Подождите пожалуйста, комментарии загружаются...";
+  return fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
+    method: "GET",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      loaderElement.textContent = "";
       comments = responseData.comments;
       renderComments();
     });
-  });
-}
+};
 getFetch();
-
 let comments = [];
 //  находится элемент, отрисовка в иннер html, в addEventListener
 const redactionText = () => {
@@ -99,7 +110,7 @@ const renderComments = () => {
         </div>
         </li>
         </ul>`;
-    }) // count менял на лайки
+    })
     .join("");
   listElement.innerHTML = commentsHtml;
   nameInputElement.value = "";
@@ -132,21 +143,23 @@ nameInputElement.addEventListener("input", validation);
 textInputElement.addEventListener("input", validation);
 // безумный прогресс понял
 const commentPush = () => {
+  buttonElement.disabled = true;
+  buttonElement.textContent = "Комментарий добавляется...";
   fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
     method: "POST",
-    body: JSON.stringify(
-      { 
-      text: textInputElement.value, 
-      name: nameInputElement.value, 
+    body: JSON.stringify({
+      text: textInputElement.value,
+      name: nameInputElement.value,
     }),
   }).then((response) => {
     response.json().then((responseData) => {
-      console.log(responseData);
-      listComments = responseData.comments;
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      getFetch();
       renderComments();
     });
   });
-  getFetch();
+  
 };
 buttonElement.addEventListener("click", () => {
   commentPush();
@@ -173,7 +186,6 @@ deleteButtonElement.addEventListener("click", () => {
     const lastElement = allComment[allComment.length - 1];
     lastElement.remove();
   }
-  
   // fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments" + id, {
   //   method: "DELETE",
   // }).then((response) => {
@@ -184,13 +196,3 @@ deleteButtonElement.addEventListener("click", () => {
   //   });
   // });
 });
-// 1. Найти элемент текст ареа, можно просто по queryselector
-// 2. С циклом фор оф перебирать каждый нужный нам элемент текст ареа для того чтобы повесить то что нам нужно
-// 3. Вешаем обработчик событий на этот элемент
-// 4. Должно получиться
-// 5.
-// 6.
-// 7.
-// 8.
-// 9.
-// 10.

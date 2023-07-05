@@ -44,3 +44,29 @@
 //     like: false,
 //     isEdit: true,
 //   },
+//const fetchPromise = 
+// loader 
+// listElement.textContent = `контент загружается`;
+// const backData = () => {
+//   // return (listElement.innerHTML = `<p>Контент загружается</p>`);
+//   listElement.innerHTML = `<p>Контент загружается</p>`;
+//   return `${listElement}`;
+// };
+// backData();
+// const getLoad = () => {
+//   return fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments")
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then(() => {
+//       console.log(responseData);;
+//     });
+// };
+// getLoad().then(() => {
+//   return contentContainer.textContent = "контент загружается";
+// })
+// getLoad();
+// Promise.all(getFetch()).then(() => {
+//   contentContainer.textContent = "контент загружается";
+//   return getFetch();
+// });
