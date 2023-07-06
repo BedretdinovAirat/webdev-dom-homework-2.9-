@@ -6,6 +6,7 @@ const deleteButtonElement = document.getElementById("delete__button");
 const buttonRedactionElement = document.getElementById("button-redaction");
 const contentContainer = document.querySelector(".container");
 const loaderElement = document.querySelector(".loader");
+const addForm = document.querySelector(".add-form");
 // const mainLoader = document.querySelector(".main__loader");
 // const textCommentElement = document.getElementById("text");
 const data = new Date();
@@ -21,7 +22,8 @@ const data = new Date();
 // contentContainer.textContent = "контент загружается";
 
 //  про классы API, promise - напомнить
-
+// addForm.style.display = "none";
+// addForm.style.display = "";
 const getFetch = () => {
   loaderElement.textContent =
     "Подождите пожалуйста, комментарии загружаются...";
@@ -35,6 +37,9 @@ const getFetch = () => {
       loaderElement.textContent = "";
       comments = responseData.comments;
       renderComments();
+    })
+    .catch(() => {
+      alert("У вас пропал интернет, повторите попытку позже.");
     });
 };
 getFetch();
@@ -151,15 +156,21 @@ const commentPush = () => {
       text: textInputElement.value,
       name: nameInputElement.value,
     }),
-  }).then((response) => {
-    response.json().then((responseData) => {
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
       getFetch();
-      renderComments();
+      return responseData;
+    })
+    .catch(() => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      alert("У вас пропал интернет, повторите попытку позже.");
     });
-  });
-  
 };
 buttonElement.addEventListener("click", () => {
   commentPush();
