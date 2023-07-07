@@ -158,7 +158,11 @@ const commentPush = () => {
     }),
   })
     .then((response) => {
-      return response.json();
+      if (response.status === 201) {
+        return response.json();
+      } else {
+        throw new Error("Сервер упал :(");
+      }
     })
     .then((responseData) => {
       buttonElement.disabled = false;
