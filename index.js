@@ -1,3 +1,13 @@
+import { renderComments } from "./renderComments.js";
+import { getRender, postRender } from "./api.js";
+export {
+  countLikeElement,
+  redactionText,
+  validation,
+  answerComments,
+  commentPush,
+  app,
+};
 // const buttonElement = document.getElementById("button");
 // const listElement = document.getElementById("ul-comment");
 // const nameInputElement = document.getElementById("name-input");
@@ -27,19 +37,15 @@ const app = document.querySelector(".app");
 const getFetch = () => {
   loaderElement.textContent =
     "Подождите пожалуйста, комментарии загружаются...";
-  return fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
-    method: "GET",
-  })
-    .then((response) => {
-      return response.json();
-    })
+  getRender()
     .then((responseData) => {
       loaderElement.textContent = "";
       comments = responseData.comments;
-      renderComments();
+      renderComments({ comments });
     })
-    .catch(() => {
-      console.error("У вас пропал интернет, повторите попытку позже.");
+    .catch((error) => {
+      console.error(error);
+      // console.error("У вас пропал интернет, повторите попытку позже.");
     });
 };
 getFetch();
@@ -59,7 +65,7 @@ const redactionText = () => {
       } else {
         comments[index].isEdit = true;
       }
-      renderComments();
+      renderComments({ comments, app });
     });
   }
 };
@@ -75,7 +81,7 @@ const countLikeElement = () => {
         comments[index].likes = comments[index].likes += 1;
         comments[index].isLiked = true;
       }
-      renderComments();
+      renderComments({ comments, app });
     });
   }
 };
@@ -87,117 +93,117 @@ const validation = () => {
   const buttonElement = document.getElementById("button");
   buttonElement.disabled = !nameInputElement.value || !textInputElement.value;
 };
-const renderComments = () => {
-  const data = new Date();
-  const commentsHtml = comments
-    .map((comment, index) => {
-      return `<li class="comment" id="li_comment">
-          <div class="comment-header">
-            <div class="comment-name">${comment.author.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            ${
-              comment.isEdit
-                ? `<textarea id=${index}>${comment.text}</textarea>`
-                : `<div class="comment-text">
-              ${comment.text}
-            </div>`
-            }
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span> 
-              <button data-index="${index}" class="like-button ${
-        comment.isLiked ? "-active-like" : ""
-      }"></button>
-            </div>
-          </div>
-          <div class="add-form-row">
-          <button class="add-form-button button-redaction" data-index="${index}">
-            ${
-              comment.isEdit
-                ? "Сохранить комментарий"
-                : "Редактировать комментарий"
-            } 
-          </button>
-        </div>
-        </li>`;
-    })
-    .join("");
-  const listHTML = `<ul id="ul-comment" class="comments">${commentsHtml}</ul><div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id="name-input"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="text-comment"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="button" data-index="">
-            Написать
-          </button>
-        </div>
-        <div class="add-form-row">
-          <button class="add-form-button" id="delete__button" data-index="">
-            Удалить последний комментарий
-          </button>
-        </div>
-      </div>`;
+// const renderComments = () => {
+//   const data = new Date();
+//   const commentsHtml = comments
+//     .map((comment, index) => {
+//       return `<li class="comment" id="li_comment">
+//           <div class="comment-header">
+//             <div class="comment-name">${comment.author.name}</div>
+//             <div>$${comment.date}</div>
+//           </div>
+//           <div class="comment-body">
+//             ${
+//               comment.isEdit
+//                 ? `<textarea type="textarea" rows='10' id=${index}>${comment.text}</textarea>`
+//                 : `<div class="comment-text">
+//               ${comment.text}
+//             </div>`
+//             }
+//           </div>
+//           <div class="comment-footer">
+//             <div class="likes">
+//               <span class="likes-counter">${comment.likes}</span>
+//               <button data-index="${index}" class="like-button ${
+//         comment.isLiked ? "-active-like" : ""
+//       }"></button>
+//             </div>
+//           </div>
+//           <div class="add-form-row">
+//           <button class="add-form-button button-redaction" data-index="${index}">
+//             ${
+//               comment.isEdit
+//                 ? "Сохранить комментарий"
+//                 : "Редактировать комментарий"
+//             }
+//           </button>
+//         </div>
+//         </li>`;
+//     })
+//     .join("");
+//   const listHTML = `<ul id="ul-comment" class="comments">${commentsHtml}</ul><div class="add-form">
+//         <input
+//           type="text"
+//           class="add-form-name"
+//           placeholder="Введите ваше имя"
+//           id="name-input"
+//         />
+//         <textarea
+//           type="textarea"
+//           class="add-form-text"
+//           placeholder="Введите ваш коментарий"
+//           rows="4"
+//           id="text-comment"
+//         ></textarea>
+//         <div class="add-form-row">
+//           <button class="add-form-button" id="button" data-index="">
+//             Написать
+//           </button>
+//         </div>
+//         <div class="add-form-row">
+//           <button class="add-form-button" id="delete__button" data-index="">
+//             Удалить последний комментарий
+//           </button>
+//         </div>
+//       </div>`;
 
-  app.innerHTML = listHTML;
-  const buttonElement = document.getElementById("button");
-  const nameInputElement = document.getElementById("name-input");
-  const textInputElement = document.getElementById("text-comment");
-  const deleteButtonElement = document.getElementById("delete__button");
-  // const buttonRedactionElement = document.getElementById("button-redaction");
-  // const contentContainer = document.querySelector(".container");
-  // const addForm = document.querySelector(".add-form");
-  // listElement.innerHTML = commentsHtml;
-  nameInputElement.value = "";
-  textInputElement.value = "";
-  buttonElement.disabled = true;
-  countLikeElement();
-  redactionText();
-  nameInputElement.addEventListener("input", validation);
-  textInputElement.addEventListener("input", validation);
-  validation();
-  buttonElement.addEventListener("click", () => {
-    commentPush();
-    renderComments();
-    countLikeElement();
-    answerComments();
-  });
-  textInputElement.addEventListener("keyup", (e) => {
-    // e.key === "Enter" перенос строки на интер
-    if (e.key === "Shift") {
-      commentPush();
-      renderComments();
-      countLikeElement();
-      answerComments();
-    }
-  });
-  // удаление
-  // нужно будет переписать код, все данные ушли в массив, нужно будет удалять из массива данных комментарий, с помощью метода, после этого вызывать перерисовку
-  // Объявляем каждый элемент в отдельной функции(const), есть переменные которые дублируем => удалить, повторяющиеся части нужно будет передать как аргументы(button, nameInput, textInput), объявить внутри рендера, дальше передавать как аргументы.
-  deleteButtonElement.addEventListener("click", () => {
-    // const deleteComment = listElement.innerHTML.lastIndexOf(
-    //   '<li class="comment" id="li_comment">'
-    // );
-    // if (deleteComment !== -1) {
-    //   const allComment = listElement.querySelectorAll(".comment");
-    //   const lastElement = allComment[allComment.length - 1];
-    //   lastElement.remove();
-    // }
-  });
-};
-renderComments();
+//   app.innerHTML = listHTML;
+//   const buttonElement = document.getElementById("button");
+//   const nameInputElement = document.getElementById("name-input");
+//   const textInputElement = document.getElementById("text-comment");
+//   const deleteButtonElement = document.getElementById("delete__button");
+//   // const buttonRedactionElement = document.getElementById("button-redaction");
+//   // const contentContainer = document.querySelector(".container");
+//   // const addForm = document.querySelector(".add-form");
+//   // listElement.innerHTML = commentsHtml;
+//   nameInputElement.value = "";
+//   textInputElement.value = "";
+//   buttonElement.disabled = true;
+//   countLikeElement();
+//   redactionText();
+//   nameInputElement.addEventListener("input", validation);
+//   textInputElement.addEventListener("input", validation);
+//   validation();
+//   buttonElement.addEventListener("click", () => {
+//     commentPush();
+//     // renderComments();
+//     countLikeElement();
+//     answerComments();
+//   });
+//   textInputElement.addEventListener("keyup", (e) => {
+//     // e.key === "Enter" перенос строки на интер
+//     if (e.key === "Shift") {
+//       commentPush();
+//       // renderComments();
+//       countLikeElement();
+//       answerComments();
+//     }
+//   });
+//   // удаление
+//   // нужно будет переписать код, все данные ушли в массив, нужно будет удалять из массива данных комментарий, с помощью метода, после этого вызывать перерисовку
+//   // Объявляем каждый элемент в отдельной функции(const), есть переменные которые дублируем => удалить, повторяющиеся части нужно будет передать как аргументы(button, nameInput, textInput), объявить внутри рендера, дальше передавать как аргументы.
+//   deleteButtonElement.addEventListener("click", () => {
+//     // const deleteComment = listElement.innerHTML.lastIndexOf(
+//     //   '<li class="comment" id="li_comment">'
+//     // );
+//     // if (deleteComment !== -1) {
+//     //   const allComment = listElement.querySelectorAll(".comment");
+//     //   const lastElement = allComment[allComment.length - 1];
+//     //   lastElement.remove();
+//     // }
+//   });
+// };
+// renderComments();
 const textConclusions = document.querySelectorAll(".comment-text");
 const liComments = document.querySelectorAll(".comment");
 const answerComments = () => {
@@ -220,39 +226,23 @@ const commentPush = () => {
   const textInputElement = document.getElementById("text-comment");
   buttonElement.disabled = true;
   buttonElement.textContent = "Комментарий добавляется...";
-  fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      text: textInputElement.value,
-      name: nameInputElement.value,
-    }),
-  })
-    .then((response) => {
-      if (response.status === 500) {
-        throw new Error("Ошибка сервера");
-      }
+  postRender({ textInputElement, nameInputElement })
+    .then(() => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      return getFetch();
+      // return responseData;
     })
-    .then((response) => {
-      if (response.status === 400) {
-        throw new Error("Не верный запрос");
-      }
-    })
-    .then((response) => {
-      if (response.status === 201) {
-        return response.json();
+    .catch((error) => {
+      if (error.message === "Не верный запрос") {
+        alert("Имя и комментарий должны быть не короче 3 симолов");
+      } else if (error.message === "Ошибка сервера") {
+        alert("Сервер сломался, попробуй позже");
       } else {
-        throw new Error("Сервер упал :(");
+        alert("Кажется у вас сломался интернет, попробуйте позже");
       }
-    })
-    .then((responseData) => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
-      getFetch();
-      return responseData;
-    })
-    .catch(() => {
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать";
-      console.error("У вас пропал интернет, повторите попытку позже.");
+      // console.error("У вас пропал интернет, повторите попытку позже.");
     });
 };

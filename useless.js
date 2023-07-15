@@ -143,3 +143,22 @@
   //     renderComments();
   //   });
   // });
+
+  // 11.07.2023 Цепочка промисов с ошибками
+  // .then((response) => {
+  //     if (response.status === 500) {
+        
+  //     }
+  //   })
+  //   .then((response) => {
+  //     if (response.status === 400) {
+  //       throw new Error("Не верный запрос");
+  //     }
+  //   })
+  //   .then((response) => {
+  //     if (response.status === 201) {
+  //       return response.json();
+  //     } else {
+  //       throw new Error("Сервер упал :(");
+  //     }
+  //   })
