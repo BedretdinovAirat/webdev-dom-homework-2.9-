@@ -1,3 +1,4 @@
+import { token, userName } from "./api.js";
 import {
   countLikeElement,
   redactionText,
@@ -5,10 +6,22 @@ import {
   answerComments,
   commentPush,
   app,
+  getFetch,
 } from "./index.js";
+import { renderLogin } from "./renderLogin.js";
 // import { getRender, postRender } from "./api.js";
 export { renderComments };
-const renderComments = ({ comments, app : innerHTML }) => {
+
+const checkLogin = () => {
+  // console.log(token);
+  if (token === undefined) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const renderComments = ({ comments, app: innerHTML }) => {
   const data = new Date();
   const commentsHtml = comments
     .map((comment, index) => {
@@ -46,11 +59,12 @@ const renderComments = ({ comments, app : innerHTML }) => {
         </li>`;
     })
     .join("");
-  const listHTML = `<ul id="ul-comment" class="comments">${commentsHtml}</ul><div class="add-form">
+  const listHTML = `<ul id="ul-comment" class="comments">${commentsHtml}</ul>
+  <div class="add-form">
         <input
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
+          placeholder=${userName} readonly
           id="name-input"
         />
         <textarea
@@ -70,6 +84,11 @@ const renderComments = ({ comments, app : innerHTML }) => {
             Удалить последний комментарий
           </button>
         </div>
+      </div>
+      <div class="authorization">
+      <h1>
+      Для добавления комментария небходимо <a class="authorization-link">авторизоваться</a>. 
+      </h1>
       </div>`;
 
   app.innerHTML = listHTML;
@@ -84,6 +103,7 @@ const renderComments = ({ comments, app : innerHTML }) => {
   nameInputElement.value = "";
   textInputElement.value = "";
   buttonElement.disabled = true;
+  // nameInputElement.disabled = true;
   countLikeElement();
   redactionText();
   nameInputElement.addEventListener("input", validation);
@@ -104,10 +124,25 @@ const renderComments = ({ comments, app : innerHTML }) => {
       answerComments();
     }
   });
+
+  const addForm = document.querySelector(".add-form");
+  const authorization = document.querySelector(".authorization");
+  const authorizationLink = document.querySelector(".authorization-link");
+  if (checkLogin() === false) {
+    addForm.style.display = "none";
+    authorization.style.display = "block";
+  } else {
+    addForm.style.display = "block";
+    authorization.style.display = "none";
+  }
+  authorizationLink.addEventListener("click", () => {
+    renderLogin({ getFetch });
+  });
   // удаление
   // нужно будет переписать код, все данные ушли в массив, нужно будет удалять из массива данных комментарий, с помощью метода, после этого вызывать перерисовку
   // Объявляем каждый элемент в отдельной функции(const), есть переменные которые дублируем => удалить, повторяющиеся части нужно будет передать как аргументы(button, nameInput, textInput), объявить внутри рендера, дальше передавать как аргументы.
   deleteButtonElement.addEventListener("click", () => {
+    // deleteRender({ id });
     // const deleteComment = listElement.innerHTML.lastIndexOf(
     //   '<li class="comment" id="li_comment">'
     // );

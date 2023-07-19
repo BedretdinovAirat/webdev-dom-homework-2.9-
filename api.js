@@ -1,13 +1,38 @@
-export { getRender, postRender };
+export {
+  getRender,
+  postRender,
+  setToken,
+  token,
+  login,
+  userName,
+  setUserName,
+};
+const host = "https://wedev-api.sky.pro/api/v2/airat-bedretdinov/comments";
+const userUrl = "https://wedev-api.sky.pro/api/user/login";
+
+let userName;
+
+const setUserName = (newUserName) => {
+  userName = newUserName;
+};
+
+let token;
+const setToken = (newToken) => {
+  token = newToken;
+};
+
 const getRender = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
-      method: "GET",
-    }).then((response) => {
-      return response.json();
-    });
-}
+  return fetch(host, {
+    method: "GET",
+    headers: {
+      // Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
 const postRender = ({ textInputElement, nameInputElement }) => {
-  return fetch("https://wedev-api.sky.pro/api/v1/airat-bedretdinov/comments", {
+  return fetch(host, {
     method: "POST",
     body: JSON.stringify({
       text: textInputElement.value
@@ -22,6 +47,9 @@ const postRender = ({ textInputElement, nameInputElement }) => {
         .replaceAll('"', "&quot;"),
       forceError: true,
     }),
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   }).then((response) => {
     if (response.status === 500) {
       throw new Error("Ошибка сервера");
@@ -36,5 +64,30 @@ const postRender = ({ textInputElement, nameInputElement }) => {
     } else {
       throw new Error("У вас сломался интернет");
     }
+  });
+};
+// const deleteRender = ({ id }) => {
+//   return fetch(`${userUrl}/${id}`, {
+//     method: "DELETE",
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   }).then((response) => {
+//     return response.json();
+//   });
+// };
+const login = ({ login, password }) => {
+  return fetch(userUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      alert("Неверные данные, попробуйте снова");
+      throw new Error("Неверные данные, попробуйте снова");
+    }
+    return response.json();
   });
 };

@@ -1,5 +1,6 @@
 import { renderComments } from "./renderComments.js";
 import { getRender, postRender } from "./api.js";
+// import { renderLogin } from "./renderLogin.js";
 export {
   countLikeElement,
   redactionText,
@@ -7,6 +8,7 @@ export {
   answerComments,
   commentPush,
   app,
+  getFetch,
 };
 // const buttonElement = document.getElementById("button");
 // const listElement = document.getElementById("ul-comment");
@@ -41,7 +43,7 @@ const getFetch = () => {
     .then((responseData) => {
       loaderElement.textContent = "";
       comments = responseData.comments;
-      renderComments({ comments });
+      renderComments({ comments, app });
     })
     .catch((error) => {
       console.error(error);
@@ -49,6 +51,7 @@ const getFetch = () => {
     });
 };
 getFetch();
+// renderLogin({getFetch});
 let comments = [];
 //  находится элемент, отрисовка в иннер html, в addEventListener
 //  классы сложные - дизлайк, back, front на классике
@@ -91,7 +94,8 @@ const validation = () => {
   const textInputElement = document.getElementById("text-comment");
   const nameInputElement = document.getElementById("name-input");
   const buttonElement = document.getElementById("button");
-  buttonElement.disabled = !nameInputElement.value || !textInputElement.value;
+  // buttonElement.disabled = !nameInputElement.value || !textInputElement.value;
+  buttonElement.disabled = !textInputElement.value;
 };
 // const renderComments = () => {
 //   const data = new Date();
