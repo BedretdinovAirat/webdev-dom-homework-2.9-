@@ -8,6 +8,7 @@ import {
   app,
   getFetch,
 } from "./index.js";
+import { format } from "date-fns";
 import { renderLogin } from "./renderLogin.js";
 // import { getRender, postRender } from "./api.js";
 export { renderComments };
@@ -22,13 +23,15 @@ const checkLogin = () => {
 };
 
 const renderComments = ({ comments, app: innerHTML }) => {
-  const data = new Date();
+  // const data = new Date();
   const commentsHtml = comments
     .map((comment, index) => {
+      const createDate = format(new Date(comment.date), "dd/MM/yyyy hh:mm");
+      console.log(comment);
       return `<li class="comment" id="li_comment">
           <div class="comment-header">
             <div class="comment-name">${comment.author.name}</div>
-            <div>$${comment.date}</div>
+            <div></div>${createDate}</div>
           </div>
           <div class="comment-body">
             ${
@@ -90,7 +93,6 @@ const renderComments = ({ comments, app: innerHTML }) => {
       Для добавления комментария небходимо <a class="authorization-link">авторизоваться</a>. 
       </h1>
       </div>`;
-
   app.innerHTML = listHTML;
   const buttonElement = document.getElementById("button");
   const nameInputElement = document.getElementById("name-input");
